@@ -51,9 +51,13 @@ function formatDate(seconds) {
   return new Date(Number(seconds) * 1000).toLocaleString();
 }
 
+function networkName() {
+  return (config && config.chainName) || 'Ganache';
+}
+
 function requireContract() {
   if (!contract) {
-    throw new Error('Connect MetaMask (on the Ganache network) first.');
+    throw new Error('Connect MetaMask (on the ' + networkName() + ' network) first.');
   }
 }
 
@@ -93,8 +97,8 @@ async function setupContract() {
   if (Number(network.chainId) !== config.chainId) {
     contract = null;
     showAlert($('banner'), 'warning',
-      'MetaMask is on a different network. Switch to your Ganache network to continue.' +
-      '<br><button id="switch-btn" class="btn btn-primary">Switch to Ganache</button>');
+      'MetaMask is on a different network. Switch to ' + escapeHtml(networkName()) + ' to continue.' +
+      '<br><button id="switch-btn" class="btn btn-primary">Switch to ' + escapeHtml(networkName()) + '</button>');
     $('switch-btn').addEventListener('click', switchNetwork);
     return;
   }
@@ -116,13 +120,19 @@ async function switchNetwork() {
     await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainIdHex }] });
   } catch (err) {
     if (err.code === 4902 || (err.data && err.data.originalError && err.data.originalError.code === 4902)) {
+      if (!config.rpcUrl) {
+        showAlert($('banner'), 'error', 'Please add the ' + escapeHtml(networkName()) + ' network to MetaMask manually, then refresh.');
+        return;
+      }
+      const symbol = config.currencySymbol || 'ETH';
       await window.ethereum.request({
         method: 'wallet_addEthereumChain',
         params: [{
           chainId: chainIdHex,
-          chainName: 'Ganache Local',
+          chainName: networkName(),
           rpcUrls: [config.rpcUrl],
-          nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+          nativeCurrency: { name: symbol, symbol: symbol, decimals: 18 },
+          blockExplorerUrls: config.explorerUrl ? [config.explorerUrl] : undefined,
         }],
       });
     } else {
@@ -203,7 +213,10 @@ async function storeDocument() {
     showAlert(status, 'success',
       '<strong>Stored on the blockchain.</strong><br>Document ID: <strong>' + escapeHtml(id) + '</strong>' +
       '<br>Keep this ID. You can use it later to verify the file.' +
-      '<br>Transaction: <code>' + escapeHtml(shortHash(receipt.hash)) + '</code>');
+      '<br>Transaction: <code>' + escapeHtml(shortHash(receipt.hash)) + '</code>' +
+      (config.explorerUrl
+        ? ' <a href="' + escapeHtml(config.explorerUrl) + '/tx/' + escapeHtml(receipt.hash) + '" target="_blank" rel="noopener">View on explorer</a>'
+        : ''));
   } catch (err) {
     showAlert(status, 'error', escapeHtml(friendlyError(err)));
   } finally {

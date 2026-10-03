@@ -78,6 +78,28 @@ You should see `Sent 100 ETH ...`.
 
 Next time: repeat Step 2, Step 3 and Step 4 (Ganache starts empty each time), then use the website.
 
+## Put it online (Render + public test network)
+
+Ganache only exists on your computer, so an online website needs the contract on a public test network.
+
+1. Create a **new MetaMask account used only for testing**. Get free test ETH for your chosen network from a faucet.
+2. Deploy the contract to the public network (PowerShell):
+   ```
+   $env:PRIVATE_KEY="0xYOUR_TEST_ACCOUNT_PRIVATE_KEY"
+   $env:RPC_URL="https://YOUR_RPC_URL"
+   $env:CHAIN_NAME="Sepolia"
+   $env:EXPLORER_URL="https://sepolia.etherscan.io"
+   npm run deploy
+   ```
+   This creates `build/EVault.public.json`. Never put the private key in a file or on GitHub.
+3. Push the project to GitHub (`node_modules` is ignored, `build/EVault.public.json` must be included).
+4. On render.com: New > Web Service > pick the repo. Build command `npm install`, start command `npm start`, instance type Free.
+5. Add the environment variable `CONTRACT_CONFIG` = `build/EVault.public.json`.
+6. Open the `onrender.com` link. Visitors need MetaMask on the same network and a little test ETH to store documents.
+
+Free Render services sleep after 15 minutes without visitors, so the first load can take about a minute.
+Local demo with Ganache keeps working as before because it uses `build/EVault.json`.
+
 ## Tamper test
 
 1. Create `report.txt` containing `Marks: 85` and store it. Note the Document ID.
