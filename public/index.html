@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blockchain E-Vault</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div>
+        <h1>Blockchain E-Vault</h1>
+        <p class="tagline">Prove a document has not been changed.</p>
+      </div>
+      <div class="wallet">
+        <span id="wallet-status" class="pill pill-off">Wallet not connected</span>
+        <button id="connect-btn" class="btn btn-primary">Connect MetaMask</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="banner" class="alert" hidden></div>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="upload" role="tab">Store a document</button>
+      <button class="tab" data-tab="verify" role="tab">Verify a document</button>
+      <button class="tab" data-tab="mine" role="tab">My documents</button>
+    </nav>
+
+    <!-- STORE -->
+    <section id="panel-upload" class="panel">
+      <h2>Store a document</h2>
+      <p class="hint">Your file stays on your computer. Only its SHA-256 fingerprint is saved on the blockchain.</p>
+
+      <label class="dropzone" id="upload-zone">
+        <input type="file" id="upload-input" hidden />
+        <strong>Choose a file</strong> or drop it here
+        <span id="upload-name" class="file-name">No file selected</span>
+      </label>
+
+      <div id="upload-hash-box" hidden>
+        <p class="label">SHA-256 hash</p>
+        <code id="upload-hash" class="hash"></code>
+      </div>
+
+      <button id="store-btn" class="btn btn-primary" disabled>Store on blockchain</button>
+      <div id="upload-status" class="alert" hidden></div>
+    </section>
+
+    <!-- VERIFY -->
+    <section id="panel-verify" class="panel" hidden>
+      <h2>Verify a document</h2>
+      <p class="hint">Select the file you want to check. If you know its Document ID, enter it to compare against that exact record.</p>
+
+      <label class="dropzone" id="verify-zone">
+        <input type="file" id="verify-input" hidden />
+        <strong>Choose a file</strong> or drop it here
+        <span id="verify-name" class="file-name">No file selected</span>
+      </label>
+
+      <div id="verify-hash-box" hidden>
+        <p class="label">SHA-256 hash of this file</p>
+        <code id="verify-hash" class="hash"></code>
+      </div>
+
+      <div class="field">
+        <label for="doc-id" class="label">Document ID (optional)</label>
+        <input type="text" id="doc-id" inputmode="numeric" placeholder="For example: 0" />
+      </div>
+
+      <button id="verify-btn" class="btn btn-primary" disabled>Verify document</button>
+      <div id="verify-result" hidden></div>
+    </section>
+
+    <!-- MY DOCUMENTS -->
+    <section id="panel-mine" class="panel" hidden>
+      <div class="panel-head">
+        <h2>My documents</h2>
+        <button id="refresh-btn" class="btn btn-ghost">Refresh</button>
+      </div>
+      <div id="mine-status" class="alert" hidden></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>File name</th><th>Hash</th><th>Stored on</th></tr>
+          </thead>
+          <tbody id="mine-body">
+            <tr><td colspan="4" class="empty">Connect your wallet to see your documents.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    Mini project: HTML, CSS, JavaScript, Node.js/Express, Solidity, Ganache and MetaMask.
+  </footer>
+
+  <script src="/lib/ethers.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

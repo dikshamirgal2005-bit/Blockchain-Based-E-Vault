@@ -1,0 +1,19 @@
+{
+  "name": "blockchain-evault",
+  "version": "1.0.0",
+  "description": "Blockchain-Based E-Vault: store and verify document hashes on a local Ethereum blockchain",
+  "main": "server.js",
+  "scripts": {
+    "ganache": "ganache --port 7545 --wallet.deterministic",
+    "deploy": "node scripts/deploy.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0",
+    "express": "^4.19.2",
+    "solc": "0.8.26"
+  },
+  "devDependencies": {
+    "ganache": "^7.9.2"
+  }
+}
